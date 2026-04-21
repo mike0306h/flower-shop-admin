@@ -433,6 +433,7 @@ export default function Settings() {
                       className="w-24 h-24 object-contain border rounded-lg bg-white"
                     />
                   </div>
+                )}
 
 
               {/* 店名 */}
