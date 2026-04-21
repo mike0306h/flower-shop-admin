@@ -210,11 +210,6 @@ export default function Settings() {
     }
   }
 
-      e.target.value = ''
-    }
-  }
-
-  // === 保存店铺信息 ===
   const saveShopInfo = async () => {
     setShopInfoLoading(true)
     try {
