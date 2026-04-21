@@ -54,7 +54,11 @@ export default function Layout() {
             </button>
             <h2 className='text-lg lg:text-xl font-semibold text-slate-800 truncate flex items-center gap-2'>
               {shopInfo.logo_url ? (
-                <img src={shopInfo.logo_url.startsWith('http') ? shopInfo.logo_url : '/api' + shopInfo.logo_url} alt='' className='w-6 h-6 object-contain' />
+                <img
+                  src={shopInfo.logo_url.startsWith('http') ? shopInfo.logo_url : '/api' + shopInfo.logo_url}
+                  alt=''
+                  className='w-6 h-6 object-contain'
+                />
               ) : '🌸'}
               <span className='truncate'>{shopInfo.shop_name || t('dashboard')}</span>
             </h2>
@@ -79,4 +83,3 @@ export default function Layout() {
     </div>
   )
 }
-
