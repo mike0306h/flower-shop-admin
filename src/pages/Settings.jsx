@@ -50,7 +50,7 @@ export default function Settings() {
   const [shopInfo, setShopInfo] = useState({
     address_zh: '', address_th: '', address_en: '',
     phone: '', hours_zh: '', hours_th: '', hours_en: '',
-    line_qr_image: '',
+    line_qr_image: '', shop_name: '', logo_url: '',
   })
   const [shopInfoLoading, setShopInfoLoading] = useState(false)
   const [shopInfoSaved, setShopInfoSaved] = useState(false)
@@ -95,6 +95,8 @@ export default function Settings() {
         hours_th: shopData.hours_th || '',
         hours_en: shopData.hours_en || '',
         line_qr_image: shopData.line_qr_image || '',
+        shop_name: shopData.shop_name || '',
+        logo_url: shopData.logo_url || '',
       })
     } catch (e) {
       console.error('Failed to load settings', e)
@@ -208,6 +210,10 @@ export default function Settings() {
     }
   }
 
+      e.target.value = ''
+    }
+  }
+
   // === 保存店铺信息 ===
   const saveShopInfo = async () => {
     setShopInfoLoading(true)
@@ -219,6 +225,23 @@ export default function Settings() {
       alert(e.response?.data?.detail || t('save_failed', '保存失败'))
     } finally {
       setShopInfoLoading(false)
+    }
+  }
+
+
+  // === 上传 Logo ===
+  const handleLogoUpload = async (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    setShopInfoUploading(true)
+    try {
+      const res = await uploadImage(file)
+      setShopInfo(s => ({ ...s, logo_url: res.url || '' }))
+    } catch {
+      alert('图片上传失败')
+    } finally {
+      setShopInfoUploading(false)
+      e.target.value = ''
     }
   }
 
@@ -415,6 +438,37 @@ export default function Settings() {
                       className="w-24 h-24 object-contain border rounded-lg bg-white"
                     />
                   </div>
+
+
+              {/* 店名 */}
+              <div>
+                <label className="block text-xs text-slate-500 mb-1">🏪 店铺名称</label>
+                <input value={shopInfo.shop_name}
+                  onChange={e => setShopInfo(s => ({ ...s, shop_name: e.target.value }))}
+                  placeholder="例如：玫瑰花坊"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
+              </div>
+
+              {/* Logo */}
+              <div>
+                <label className="block text-xs text-slate-500 mb-1">🎨 店铺 Logo</label>
+                <div className="flex items-center gap-3">
+                  <label className="cursor-pointer inline-flex items-center gap-1 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm transition-colors">
+                    {shopInfoUploading ? '...' : '📤'}{shopInfoUploading ? t('uploading') : t('upload_image')}
+                    <input type="file" accept="image/*" onChange={handleLogoUpload} className="hidden" />
+                  </label>
+                  {shopInfo.logo_url && <span className="text-xs text-green-600">✓ 已上传</span>}
+                </div>
+                {shopInfo.logo_url && (
+                  <div className="mt-2">
+                    <img
+                      src={shopInfo.logo_url.startsWith('http') ? shopInfo.logo_url : '/api' + shopInfo.logo_url}
+                      alt="Logo"
+                      className="w-16 h-16 object-contain border rounded-lg bg-white"
+                    />
+                  </div>
+                )}
+              </div>
                 )}
               </div>
 

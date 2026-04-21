@@ -1,4 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
+import api from '../services/api'
 import { useI18n } from '../context/I18nContext'
 import { useAuth } from '../context/AuthContext'
 
@@ -42,6 +43,13 @@ const ALL_MENU_ITEMS = [
 ]
 
 export default function Sidebar({ onNavigate }) {
+  const [shopInfo, setShopInfo] = useState({ shop_name: '花店后台', logo_url: '' })
+
+  useEffect(() => {
+    api.get('/shop-info').then(res => {
+      setShopInfo({ shop_name: res.shop_name || '花店后台', logo_url: res.logo_url || '' })
+    }).catch(() => {})
+  }, [])
   const { t } = useI18n()
   const { user, logout, hasPermission } = useAuth()
   const location = useLocation()
@@ -68,10 +76,14 @@ export default function Sidebar({ onNavigate }) {
       {/* Logo */}
       <div className="p-4 border-b border-slate-700">
         <Link to="/" className="flex items-center gap-2" onClick={handleNavClick}>
-          <span className="text-2xl">🌸</span>
+          {shopInfo.logo_url ? (
+            <img src={shopInfo.logo_url.startsWith('http') ? shopInfo.logo_url : '/api' + shopInfo.logo_url} alt="logo" className="w-8 h-8 object-contain" />
+          ) : (
+            <span className="text-2xl">🌸</span>
+          )}
           <div>
-            <h1 className="font-bold">花店后台</h1>
-            <p className="text-xs text-slate-400">Flower Shop Admin</p>
+            <h1 className="font-bold">{shopInfo.shop_name}</h1>
+            <p className="text-xs text-slate-400">Admin</p>
           </div>
         </Link>
       </div>
