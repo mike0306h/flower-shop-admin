@@ -51,6 +51,7 @@ export default function Settings() {
     address_zh: '', address_th: '', address_en: '',
     phone: '', hours_zh: '', hours_th: '', hours_en: '',
     line_qr_image: '', shop_name: '', logo_url: '',
+    seo_keywords: '', seo_description: '',
   })
   const [shopInfoLoading, setShopInfoLoading] = useState(false)
   const [shopInfoSaved, setShopInfoSaved] = useState(false)
@@ -91,6 +92,8 @@ export default function Settings() {
         line_qr_image: shopData.line_qr_image || '',
         shop_name: shopData.shop_name || '',
         logo_url: shopData.logo_url || '',
+        seo_keywords: shopData.seo_keywords || '',
+        seo_description: shopData.seo_description || '',
       })
     } catch (e) {
       console.error('Failed to load settings', e)
@@ -409,6 +412,27 @@ export default function Settings() {
                       alt='Line QR' className='w-24 h-24 object-contain border rounded-lg bg-white' />
                   </div>
                 )}
+              </div>
+
+              {/* SEO 关键词 */}
+              <div>
+                <label className='block text-xs text-slate-500 mb-1'>🔍 SEO 关键词</label>
+                <input value={shopInfo.seo_keywords}
+                  onChange={e => setShopInfo(s => ({ ...s, seo_keywords: e.target.value }))}
+                  placeholder='例如：曼谷花店, 鲜花配送, 生日花束（用英文逗号分隔）'
+                  className='w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none' />
+                <p className='text-xs text-slate-400 mt-1'>用于搜索引擎优化，影响网站在 Google 等平台的搜索排名</p>
+              </div>
+
+              {/* SEO 描述 */}
+              <div>
+                <label className='block text-xs text-slate-500 mb-1'>📝 SEO 描述</label>
+                <textarea value={shopInfo.seo_description}
+                  onChange={e => setShopInfo(s => ({ ...s, seo_description: e.target.value }))}
+                  placeholder='例如：曼谷专业花店，提供鲜花定制、生日花束、婚礼花艺等服务，同城免费配送'
+                  rows={3}
+                  className='w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none resize-none' />
+                <p className='text-xs text-slate-400 mt-1'>显示在搜索引擎结果中的描述，建议 120-160 字符</p>
               </div>
 
               {shopInfoSaved && (
