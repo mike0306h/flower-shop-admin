@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+/* TEST_BUILD_MARKER_12345 */ import React, { useState, useEffect, useRef } from 'react'
 import { useI18n } from '../context/I18nContext'
 import { getProducts, createProduct, updateProduct, deleteProduct, uploadImage, getCategories } from '../services/api'
 
@@ -24,28 +24,14 @@ function RichTextArea({ value, onChange, placeholder, labels = {} }) {
     const selected = ta.value.substring(start, end)
     const newText = ta.value.substring(0, start) + before + selected + after + ta.value.substring(end)
     onChange(newText)
-    // 恢复光标位置
     setTimeout(() => {
       ta.focus()
       ta.setSelectionRange(start + before.length, start + before.length + selected.length)
     }, 0)
   }
 
-  const insertAtCursor = (text) => {
-    const ta = textareaRef.current
-    if (!ta) return
-    const start = ta.selectionStart
-    const newText = ta.value.substring(0, start) + text + ta.value.substring(start)
-    onChange(newText)
-    setTimeout(() => {
-      ta.focus()
-      ta.setSelectionRange(start + text.length, start + text.length)
-    }, 0)
-  }
-
   return (
     <div className="border border-slate-300 rounded-lg overflow-hidden">
-      {/* 格式化工具栏 */}
       <div className="flex items-center gap-1 p-2 bg-slate-50 border-b border-slate-300 flex-wrap">
         <button type="button" onClick={() => wrapSelection('<b>', '</b>')} title={bold} className="px-2 py-1 text-sm font-bold text-slate-700 hover:bg-slate-200 rounded">B</button>
         <button type="button" onClick={() => wrapSelection('<i>', '</i>')} title={italic} className="px-2 py-1 text-sm italic text-slate-700 hover:bg-slate-200 rounded">I</button>
@@ -60,7 +46,6 @@ function RichTextArea({ value, onChange, placeholder, labels = {} }) {
         <span className="w-px h-5 bg-slate-300 mx-1" />
         <button type="button" onClick={() => onChange('')} title={clear_content} className="px-2 py-1 text-sm text-red-400 hover:bg-slate-200 rounded">🗑 {clear_content}</button>
       </div>
-      {/* 文本输入区 */}
       <textarea
         ref={textareaRef}
         value={value}
@@ -92,12 +77,10 @@ function ProductModal({ editingProduct, onClose, onSaved }) {
   const [uploadingImages, setUploadingImages] = useState(false)
   const [saving, setSaving] = useState(false)
 
-  // 加载分类列表
   useEffect(() => {
     getCategories().then(setCategories).catch(() => {})
   }, [])
 
-  // 打开时初始化
   useEffect(() => {
     if (editingProduct) {
       setFormData({
@@ -193,7 +176,6 @@ function ProductModal({ editingProduct, onClose, onSaved }) {
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
-        {/* Header */}
         <div className="flex items-center justify-between p-6 border-b sticky top-0 bg-white rounded-t-xl z-10">
           <h2 className="text-xl font-bold">{editingProduct ? t('edit_product', '编辑商品') : t('add_product', '添加商品')}</h2>
           <button onClick={onClose} className="text-slate-400 hover:text-slate-600 text-2xl">×</button>
@@ -201,7 +183,6 @@ function ProductModal({ editingProduct, onClose, onSaved }) {
 
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
 
-          {/* 基本信息 */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium mb-1">{t('product_name_zh', '商品名称 (中文)')} *</label>
@@ -217,7 +198,6 @@ function ProductModal({ editingProduct, onClose, onSaved }) {
             </div>
           </div>
 
-          {/* 价格 */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium mb-1">{t('price_th', '价格 (฿)')} *</label>
@@ -229,7 +209,6 @@ function ProductModal({ editingProduct, onClose, onSaved }) {
             </div>
           </div>
 
-          {/* 分类 — 动态从 categories 表加载 */}
           <div>
             <label className="block text-sm font-medium mb-1">{t('category', '分类')}</label>
             <select value={formData.category} onChange={e => setFormData(p => ({ ...p, category: e.target.value }))} className="w-full px-3 py-2 border rounded-lg">
@@ -244,7 +223,6 @@ function ProductModal({ editingProduct, onClose, onSaved }) {
             </select>
           </div>
 
-          {/* 库存 */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium mb-1">{t('stock_quantity', '库存数量')}</label>
@@ -256,13 +234,11 @@ function ProductModal({ editingProduct, onClose, onSaved }) {
             </div>
           </div>
 
-          {/* 库存警告 */}
           <div className="flex items-center gap-2">
             <input type="checkbox" id="notify_low_stock" checked={formData.notify_low_stock} onChange={e => setFormData(p => ({ ...p, notify_low_stock: e.target.checked }))} className="w-4 h-4" />
             <label htmlFor="notify_low_stock" className="text-sm">{t('low_stock_notification', '库存低于阈值时发送低库存提醒')}</label>
           </div>
 
-          {/* 花材规格 */}
           <div>
             <div className="flex items-center justify-between mb-2">
               <label className="block text-sm font-medium">{t('flower_specs', '花材规格')}</label>
@@ -297,7 +273,6 @@ function ProductModal({ editingProduct, onClose, onSaved }) {
             </div>
           </div>
 
-          {/* 商品描述 */}
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium mb-1">{t('description_zh', '描述 (中文)')}</label>
@@ -306,15 +281,10 @@ function ProductModal({ editingProduct, onClose, onSaved }) {
                 onChange={val => setDescription(d => ({ ...d, zh: val }))}
                 placeholder={t('description_placeholder_zh', '输入商品描述... 支持 HTML 格式：<b>粗体</b> <i>斜体</i> <ul><li>列表项</li></ul>')}
                 labels={{
-                  bold: t('bold', '粗体'),
-                  italic: t('italic', '斜体'),
-                  underline: t('underline', '下划线'),
-                  unordered_list: t('unordered_list', '无序列表'),
-                  ordered_list: t('ordered_list', '有序列表'),
-                  insert_link: t('insert_link', '插入链接'),
-                  link_url_placeholder: t('link_url_placeholder', '输入链接地址:'),
-                  red_emphasis: t('red_emphasis', '红色强调'),
-                  green_emphasis: t('green_emphasis', '绿色强调'),
+                  bold: t('bold', '粗体'), italic: t('italic', '斜体'), underline: t('underline', '下划线'),
+                  unordered_list: t('unordered_list', '无序列表'), ordered_list: t('ordered_list', '有序列表'),
+                  insert_link: t('insert_link', '插入链接'), link_url_placeholder: t('link_url_placeholder', '输入链接地址:'),
+                  red_emphasis: t('red_emphasis', '红色强调'), green_emphasis: t('green_emphasis', '绿色强调'),
                   clear_content: t('clear_content', '清空内容'),
                 }}
               />
@@ -326,15 +296,10 @@ function ProductModal({ editingProduct, onClose, onSaved }) {
                 onChange={val => setDescription(d => ({ ...d, th: val }))}
                 placeholder="คำอธิบายสินค้า (ภาษาไทย)..."
                 labels={{
-                  bold: t('bold', '粗体'),
-                  italic: t('italic', '斜体'),
-                  underline: t('underline', '下划线'),
-                  unordered_list: t('unordered_list', '无序列表'),
-                  ordered_list: t('ordered_list', '有序列表'),
-                  insert_link: t('insert_link', '插入链接'),
-                  link_url_placeholder: t('link_url_placeholder', '输入链接地址:'),
-                  red_emphasis: t('red_emphasis', '红色强调'),
-                  green_emphasis: t('green_emphasis', '绿色强调'),
+                  bold: t('bold', '粗体'), italic: t('italic', '斜体'), underline: t('underline', '下划线'),
+                  unordered_list: t('unordered_list', '无序列表'), ordered_list: t('ordered_list', '有序列表'),
+                  insert_link: t('insert_link', '插入链接'), link_url_placeholder: t('link_url_placeholder', '输入链接地址:'),
+                  red_emphasis: t('red_emphasis', '红色强调'), green_emphasis: t('green_emphasis', '绿色强调'),
                   clear_content: t('clear_content', '清空内容'),
                 }}
               />
@@ -346,22 +311,16 @@ function ProductModal({ editingProduct, onClose, onSaved }) {
                 onChange={val => setDescription(d => ({ ...d, en: val }))}
                 placeholder="Product description in English..."
                 labels={{
-                  bold: t('bold', '粗体'),
-                  italic: t('italic', '斜体'),
-                  underline: t('underline', '下划线'),
-                  unordered_list: t('unordered_list', '无序列表'),
-                  ordered_list: t('ordered_list', '有序列表'),
-                  insert_link: t('insert_link', '插入链接'),
-                  link_url_placeholder: t('link_url_placeholder', '输入链接地址:'),
-                  red_emphasis: t('red_emphasis', '红色强调'),
-                  green_emphasis: t('green_emphasis', '绿色强调'),
+                  bold: t('bold', '粗体'), italic: t('italic', '斜体'), underline: t('underline', '下划线'),
+                  unordered_list: t('unordered_list', '无序列表'), ordered_list: t('ordered_list', '有序列表'),
+                  insert_link: t('insert_link', '插入链接'), link_url_placeholder: t('link_url_placeholder', '输入链接地址:'),
+                  red_emphasis: t('red_emphasis', '红色强调'), green_emphasis: t('green_emphasis', '绿色强调'),
                   clear_content: t('clear_content', '清空内容'),
                 }}
               />
             </div>
           </div>
 
-          {/* 图片上传 */}
           <div>
             <label className="block text-sm font-medium mb-1">{t('product_image', '商品图片')}</label>
             <div className="border-2 border-dashed border-slate-300 rounded-lg p-4 text-center hover:border-blue-400 transition-colors">
@@ -391,7 +350,6 @@ function ProductModal({ editingProduct, onClose, onSaved }) {
             )}
           </div>
 
-          {/* 操作按钮 */}
           <div className="flex gap-3 pt-4 border-t">
             <button type="button" onClick={onClose} className="flex-1 px-4 py-2 border rounded-lg hover:bg-slate-50">{t('cancel', '取消')}</button>
             <button type="submit" disabled={saving || !formData.name || !formData.price} className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50">
@@ -410,11 +368,13 @@ function ProductModal({ editingProduct, onClose, onSaved }) {
 export default function Products() {
   const { t, lang } = useI18n()
   const [products, setProducts] = useState([])
+  const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
   const [editingProduct, setEditingProduct] = useState(null)
   const [deleteId, setDeleteId] = useState(null)
 
+  // 加载商品列表
   const loadProducts = async (page = 1) => {
     setLoading(true)
     try {
@@ -427,7 +387,18 @@ export default function Products() {
     }
   }
 
+  // 加载分类列表（用于表格分类列显示）
+  const loadCategories = async () => {
+    try {
+      const res = await getCategories()
+      setCategories(res.items || res || [])
+    } catch {
+      // silent
+    }
+  }
+
   useEffect(() => { loadProducts() }, [])
+  useEffect(() => { loadCategories() }, [])
 
   const handleSaved = () => { loadProducts() }
 
@@ -465,7 +436,7 @@ export default function Products() {
       const name = cat.name_zh || cat.name_th || cat.name_en || cat.slug
       return `${cat.emoji || '📂'} ${name}`
     }
-    return catSlug // 未找到时显示原始 slug
+    return catSlug
   }
 
   return (
@@ -525,7 +496,6 @@ export default function Products() {
         </div>
       )}
 
-      {/* 添加/编辑弹窗 */}
       {showModal && (
         <ProductModal
           editingProduct={editingProduct}
@@ -534,7 +504,6 @@ export default function Products() {
         />
       )}
 
-      {/* 删除确认 */}
       {deleteId && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl p-6 w-full max-w-sm shadow-2xl">
