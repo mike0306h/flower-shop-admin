@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useI18n } from '../context/I18nContext'
-import { getProducts, createProduct, updateProduct, deleteProduct, uploadImage } from '../services/api'
-
-const CATEGORIES = ['bouquet', 'rose', 'tulip', 'tropical']
+import { getProducts, createProduct, updateProduct, deleteProduct, uploadImage, getCategories } from '../services/api'
 
 // ============================================================================
 // 富文本编辑组件 — 基于原生 textarea + HTML 格式化按钮，稳定可靠
@@ -86,12 +84,18 @@ function ProductModal({ editingProduct, onClose, onSaved }) {
     images: [],
     stock: '', stock_threshold: '10',
     notify_low_stock: true,
-    category: 'bouquet', tags: [],
+    category: '', tags: [],
   })
+  const [categories, setCategories] = useState([])
   const [flowerOptions, setFlowerOptions] = useState([{ count: 11, price: 0 }])
   const [description, setDescription] = useState({ zh: '', th: '', en: '' })
   const [uploadingImages, setUploadingImages] = useState(false)
   const [saving, setSaving] = useState(false)
+
+  // 加载分类列表
+  useEffect(() => {
+    getCategories().then(setCategories).catch(() => {})
+  }, [])
 
   // 打开时初始化
   useEffect(() => {
@@ -106,7 +110,7 @@ function ProductModal({ editingProduct, onClose, onSaved }) {
         stock: editingProduct.stock || '',
         stock_threshold: String(editingProduct.stock_threshold || 10),
         notify_low_stock: editingProduct.notify_low_stock !== false,
-        category: editingProduct.category || 'bouquet',
+        category: editingProduct.category || '',
         tags: editingProduct.tags || [],
       })
       setFlowerOptions(editingProduct.flower_options && editingProduct.flower_options.length > 0
@@ -119,7 +123,7 @@ function ProductModal({ editingProduct, onClose, onSaved }) {
         en: editingProduct.description_en || '',
       })
     } else {
-      setFormData({ name: '', name_th: '', name_en: '', price: '', original_price: '', images: [], stock: '', stock_threshold: '10', notify_low_stock: true, category: 'bouquet', tags: [] })
+      setFormData({ name: '', name_th: '', name_en: '', price: '', original_price: '', images: [], stock: '', stock_threshold: '10', notify_low_stock: true, category: '', tags: [] })
       setFlowerOptions([{ count: 11, price: 0 }])
       setDescription({ zh: '', th: '', en: '' })
     }
@@ -225,14 +229,18 @@ function ProductModal({ editingProduct, onClose, onSaved }) {
             </div>
           </div>
 
-          {/* 分类 */}
+          {/* 分类 — 动态从 categories 表加载 */}
           <div>
             <label className="block text-sm font-medium mb-1">{t('category', '分类')}</label>
             <select value={formData.category} onChange={e => setFormData(p => ({ ...p, category: e.target.value }))} className="w-full px-3 py-2 border rounded-lg">
-              <option value="bouquet">{t('bouquet', '花束')} (Bouquet)</option>
-              <option value="rose">{t('rose', '玫瑰')} (Rose)</option>
-              <option value="tulip">{t('tulip', '郁金香')} (Tulip)</option>
-              <option value="tropical">{t('tropical', '热带花')} (Tropical)</option>
+              <option value="">— {t('select_category', '选择分类')} —</option>
+              {categories.map(cat => (
+                <option key={cat.id} value={cat.slug}>
+                  {cat.emoji || '📂'} {cat.name_zh || cat.slug}
+                  {cat.name_th ? ` / ${cat.name_th}` : ''}
+                  {cat.name_en ? ` / ${cat.name_en}` : ''}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -449,14 +457,15 @@ export default function Products() {
     }
   }
 
-  const categoryLabel = (cat) => {
-    const map = {
-      bouquet: t('bouquet', '花束'),
-      rose: t('rose', '玫瑰'),
-      tulip: t('tulip', '郁金香'),
-      tropical: t('tropical', '热带花')
+  // 根据 slug 从 categories 查找分类的显示名称
+  const categoryLabel = (catSlug) => {
+    if (!catSlug) return '—'
+    const cat = categories.find(c => c.slug === catSlug)
+    if (cat) {
+      const name = cat.name_zh || cat.name_th || cat.name_en || cat.slug
+      return `${cat.emoji || '📂'} ${name}`
     }
-    return map[cat] || cat
+    return catSlug // 未找到时显示原始 slug
   }
 
   return (

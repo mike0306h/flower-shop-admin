@@ -59,7 +59,7 @@ export default function StaffManagement() {
       if (filterActive !== '') params.append('is_active', filterActive)
       if (keyword) params.append('keyword', keyword)
 
-      const res = await fetch(`http://localhost:3457/api/admin-users?${params}`, {
+      const res = await fetch(`/api/admin-users?${params}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       const data = await res.json()
@@ -107,8 +107,8 @@ export default function StaffManagement() {
     try {
       const isEdit = !!editingStaff
       const url = isEdit
-        ? `http://localhost:3457/api/admin-users/${editingStaff.id}`
-        : 'http://localhost:3457/api/admin-users'
+        ? `/api/admin-users/${editingStaff.id}`
+        : '/api/admin-users'
       const body = isEdit
         ? { role: form.role, name: form.name, phone: form.phone, department: form.department }
         : { ...form }
@@ -138,7 +138,7 @@ export default function StaffManagement() {
   const handleDelete = async (staff) => {
     if (!confirm(`确认删除店员 "${staff.name || staff.username}" 吗？`)) return
     try {
-      const res = await fetch(`http://localhost:3457/api/admin-users/${staff.id}`, {
+      const res = await fetch(`/api/admin-users/${staff.id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       })
@@ -155,7 +155,7 @@ export default function StaffManagement() {
 
   const handleToggleActive = async (staff) => {
     try {
-      const res = await fetch(`http://localhost:3457/api/admin-users/${staff.id}`, {
+      const res = await fetch(`/api/admin-users/${staff.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -176,7 +176,7 @@ export default function StaffManagement() {
     }
     setResetPwdLoading(true)
     try {
-      const res = await fetch(`http://localhost:3457/api/admin-users/${resetPwdStaff.id}/reset-password`, {
+      const res = await fetch(`/api/admin-users/${resetPwdStaff.id}/reset-password`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

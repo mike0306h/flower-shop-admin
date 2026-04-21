@@ -130,7 +130,7 @@ export default function Categories() {
   const getImageUrl = (cat) => {
     if (!cat.image) return null
     if (cat.image.startsWith('http')) return cat.image
-    return `http://localhost:3457${cat.image}`
+    return cat.image.startsWith('http') ? cat.image : `/api${cat.image}`
   }
 
   return (

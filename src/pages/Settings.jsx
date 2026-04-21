@@ -410,7 +410,7 @@ export default function Settings() {
                 {shopInfo.line_qr_image && (
                   <div className="mt-2">
                     <img
-                      src={shopInfo.line_qr_image.startsWith('http') ? shopInfo.line_qr_image : `http://localhost:3457${shopInfo.line_qr_image}`}
+                      src={shopInfo.line_qr_image.startsWith('http') ? shopInfo.line_qr_image : `/api${shopInfo.line_qr_image}`}
                       alt="Line QR"
                       className="w-24 h-24 object-contain border rounded-lg bg-white"
                     />
