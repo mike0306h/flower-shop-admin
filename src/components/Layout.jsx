@@ -21,6 +21,15 @@ export default function Layout() {
     }).catch(() => {})
   }, [])
 
+  const sidebarClass = sidebarOpen
+    ? 'translate-x-0'
+    : '-translate-x-full lg:translate-x-0 lg:block'
+
+  const btnClass = (code) => {
+    const base = 'px-2 sm:px-3 py-1.5 rounded-full text-xs sm:text-sm flex items-center gap-1 transition-all whitespace-nowrap '
+    return base + (lang === code ? 'bg-blue-100 text-blue-700 font-medium' : 'bg-slate-100 text-slate-600 hover:bg-slate-200')
+  }
+
   return (
     <div className='flex min-h-screen'>
       {sidebarOpen && (
@@ -29,7 +38,7 @@ export default function Layout() {
           onClick={() => setSidebarOpen(false)}
         />
       )}
-      <div className={}>
+      <div className={'fixed lg:static inset-y-0 left-0 z-50 transform transition-transform duration-300 ease-in-out ' + sidebarClass}>
         <Sidebar onNavigate={() => setSidebarOpen(false)} />
       </div>
       <main className='flex-1 flex flex-col min-w-0'>
@@ -55,7 +64,7 @@ export default function Layout() {
               <button
                 key={l.code}
                 onClick={() => changeLanguage(l.code)}
-                className={}
+                className={btnClass(l.code)}
               >
                 <span>{l.flag}</span>
                 <span className='hidden sm:inline'>{l.name}</span>
@@ -70,3 +79,4 @@ export default function Layout() {
     </div>
   )
 }
+
